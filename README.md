@@ -53,5 +53,4 @@ En este módulo se trabaja con
 ## Sobre el repositorio
 
 Este repositorio corresponde a la parte teórica del módulo <b>Desarrollo de SPA
-utilizando React</b> y el contenido arranca desde el punto en que se empieza a
-trabajar con Git/GitHub
+utilizando React</b>
