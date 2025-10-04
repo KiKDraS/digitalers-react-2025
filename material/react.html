@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción a React: Conceptos y Características Clave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+        h1 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #28a745;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #6c757d;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        strong {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .code-block {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>⚛️ Introducción a React: ¿Qué es y Cómo Funciona?</h1>
+        <p><strong>React</strong> es una de las bibliotecas de JavaScript más populares, creada por Facebook (Meta), utilizada para construir **interfaces de usuario (UI)**. Su objetivo es hacer que el desarrollo de aplicaciones web complejas sea más organizado, eficiente y fácil de mantener.</p>
+        
+        <p>Piensa en React como la herramienta que te permite construir la parte visible y dinámica de una aplicación (botones, menús, formularios) de forma inteligente y modular.</p>
+
+        <hr>
+
+        <h2>🔑 Características Principales de React</h2>
+        
+        <h3>1. Basado en Componentes (Component-Based)</h3>
+        <p>Esta es la característica fundamental. React te anima a dividir toda tu interfaz de usuario en **piezas independientes, aisladas y reutilizables** llamadas **Componentes**.</p>
+        <ul>
+            <li><strong>Analogía:</strong> En lugar de construir un muro de ladrillos, construyes piezas prefabricadas (componentes) que puedes usar y ensamblar una y otra vez.</li>
+            <li><strong>Beneficio:</strong> Un botón, una tarjeta de usuario o un menú de navegación son componentes. Si cambias el código del componente "botón", ese cambio se aplica automáticamente a todos los botones que lo usan en la aplicación.</li>
+        </ul>
+
+        <h3>2. JSX (JavaScript XML)</h3>
+        <p>JSX es una extensión de sintaxis de JavaScript que te permite escribir código que se **parece a HTML** dentro de tus archivos de JavaScript. Técnicamente, es un azúcar sintáctico (una forma más legible de escribir código).</p>
+        <ul>
+            <li><strong>Propósito:</strong> Permite mantener la lógica de la interfaz (JavaScript) y su estructura visual (similar a HTML) en el mismo lugar, haciendo el código más intuitivo de leer.</li>
+            <li><strong>Ejemplo de Código:</strong>
+                <div class="code-block">
+                    <code>const elemento = &lt;h1&gt;Hola, mundo desde React!&lt;/h1&gt;;</code>
+                </div>
+                Este código no es HTML, es JavaScript que debe ser transpilado para que el navegador lo entienda.
+            </li>
+        </ul>
+
+        <h3>3. El DOM Virtual (Virtual DOM)</h3>
+        <p>El DOM (Document Object Model) es la representación en el navegador de la página web. Actualizar el DOM directamente cada vez que algo cambia es un proceso **lento**.</p>
+        <ul>
+            <li><strong>Solución de React:</strong> React utiliza un **DOM Virtual**, que es una copia ligera del DOM real mantenida en memoria.</li>
+            <li><strong>Proceso:</strong> Cuando los datos de tu aplicación cambian, React primero actualiza su DOM Virtual. Luego, utiliza un algoritmo de "diferencia" (diffing) para encontrar el cambio exacto. Finalmente, **solo aplica ese cambio mínimo y necesario** al DOM real del navegador.</li>
+            <li><strong>Ventaja:</strong> Esta optimización hace que las aplicaciones de React sean muy **rápidas y eficientes** al actualizar la interfaz, mejorando el rendimiento general.</li>
+        </ul>
+
+        <h3>4. Flujo de Datos Unidireccional</h3>
+        <p>En React, los datos fluyen en una única dirección, lo que hace que la aplicación sea más predecible y fácil de depurar.</p>
+        <ul>
+            <li><strong>Dirección:</strong> De los componentes **padres** a los componentes **hijos** a través de las **props** (propiedades).</li>
+            <li><strong>Concepto Clave:</strong> La interfaz de usuario es una función del **estado** interno del componente. Cuando el estado cambia, el componente se vuelve a renderizar, pero siempre bajo el control del componente padre o del componente que mantiene el estado.</li>
+        </ul>
+        
+        <hr>
+        
+        <p>En resumen, React es una herramienta poderosa que te ayuda a construir interfaces de usuario dinámicas y complejas, haciéndolas modulares, legibles (con JSX) y súper eficientes (gracias al DOM Virtual).</p>
+    </div>
+
+</body>
+</html>
