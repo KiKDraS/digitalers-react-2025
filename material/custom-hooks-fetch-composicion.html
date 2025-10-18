@@ -60,6 +60,14 @@
       margin: 20px 0;
       border-radius: 4px;
     }
+
+    .warning-note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0ad4e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
   </style>
 </head>
 
@@ -134,8 +142,7 @@ function AlertCard() {
 
     <h3>Ejemplo: Formulario Componible</h3>
     <p>Este ejemplo combina un componente <code>&lt;Form /&gt;</code> para la estructura, un
-      <code>&lt;Input /&gt;</code> para los campos, y el hook <code>useForm</code> para el estado.
-    </p>
+      <code>&lt;Input /&gt;</code> para los campos, y el hook <code>useForm</code> para el estado.</p>
 
     <pre><code class="language-jsx">
 import React, { useState } from 'react';
@@ -202,17 +209,6 @@ function LoginForm() {
   );
 }
 </code></pre>
-    <div class="note">
-      <strong>Ventajas Clave:</strong>
-      <ul>
-        <li><strong>Consistencia:</strong> Todos los formularios envueltos en <code>&lt;Form /&gt;</code> tendrán el
-          mismo estilo base (tarjeta, título, padding).</li>
-        <li><strong>Reutilización Máxima:</strong> Cada pieza (lógica, contenedor, campo) es independiente y puede
-          usarse en cualquier lugar.</li>
-        <li><strong>Código Declarativo:</strong> El <code>&lt;LoginForm /&gt;</code> describe claramente su estructura
-          sin preocuparse por los detalles de implementación del estilo.</li>
-      </ul>
-    </div>
   </div>
 
 
@@ -276,34 +272,47 @@ function UserProfileClassic({ userId }) {
       mostrar un estado de carga mientras se descarga el código de un componente usando <code>React.lazy()</code>.
     </p>
 
-    <h4>1. Crear un Error Boundary</h4>
+    <h4>1. Crear un Error Boundary Reutilizable</h4>
+    <p>Modificamos el <code>ErrorBoundary</code> para que acepte una UI de fallback como prop, haciéndolo más flexible.
+    </p>
     <pre><code class="language-jsx">
 import React from 'react';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false };
   }
   static getDerivedStateFromError(error) {
-    return { hasError: true, error: error };
+    // Actualiza el estado para que el siguiente renderizado muestre la UI de fallback.
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    // También puedes registrar el error en un servicio de reporte.
+    console.error("Error atrapado por ErrorBoundary:", error, errorInfo);
   }
   render() {
     if (this.state.hasError) {
-      return (
-        &lt;div className="alert alert-danger"&gt;
-          &lt;h4 className="alert-heading"&gt;Error&lt;/h4&gt;
-          &lt;p&gt;No se pudo cargar el componente.&lt;/p&gt;
-        &lt;/div&gt;
-      );
+      // Renderiza la UI de fallback que recibimos por props.
+      return this.props.fallback;
     }
     return this.props.children;
   }
 }
 export default ErrorBoundary;
 </code></pre>
+    <div class="note">
+      <h4>¿Por qué un Componente de Clase?</h4>
+      <p>Actualmente, los <strong>Error Boundaries solo pueden ser componentes de clase</strong>. Esto se debe a que la
+        funcionalidad de "atrapar" errores de los componentes hijos se implementa a través de métodos de ciclo de vida
+        específicos: <strong><code>static getDerivedStateFromError()</code></strong> y
+        <strong><code>componentDidCatch()</code></strong>.</p>
+      <p>Los Hooks en los componentes funcionales, como <code>useEffect</code>, se ejecutan <em>después</em> de que el
+        renderizado se ha completado (commit), por lo que no pueden interceptar errores que ocurren <em>durante</em> el
+        renderizado de la misma manera. Por esta razón, no existe un Hook nativo que reemplace esta funcionalidad.</p>
+    </div>
 
-    <h4>2. Usar `React.lazy` para Carga Diferida</h4>
+    <h4>2. Usar `React.lazy` con el Error Boundary Reutilizable</h4>
     <pre><code class="language-jsx">
 import React, { Suspense, lazy } from 'react';
 import ErrorBoundary from './ErrorBoundary';
@@ -312,13 +321,19 @@ import ErrorBoundary from './ErrorBoundary';
 const UserProfileDetails = lazy(() => import('./UserProfileDetails'));
 
 function UserProfileLazy() {
+  const errorFallback = (
+    &lt;div className="alert alert-danger"&gt;
+      No se pudo cargar el componente de perfil.
+    &lt;/div&gt;
+  );
+
   return (
     &lt;div className="card"&gt;
       &lt;div className="card-header"&gt;
         &lt;h3&gt;Perfil de Usuario (Lazy Loaded)&lt;/h3&gt;
       &lt;/div&gt;
       &lt;div className="card-body"&gt;
-        &lt;ErrorBoundary&gt;
+        &lt;ErrorBoundary fallback={errorFallback}&gt;
           &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
             &lt;UserProfileDetails userId={1} /&gt;
           &lt;/Suspense&gt;
@@ -333,8 +348,7 @@ function UserProfileLazy() {
 
     <h3>Enfoque 3 (React 19): `Suspense` + `use()` para Data Fetching</h3>
     <p>React 19 integra el fetching de datos directamente con <code>Suspense</code> a través del hook
-      <code>use()</code>.
-    </p>
+      <code>use()</code>.</p>
 
     <pre><code class="language-jsx">
 import React, { Suspense, use } from 'react';
@@ -360,12 +374,18 @@ function UserProfile({ userId }) {
 }
 
 function UserPageR19({ userId }) {
+  const errorFallback = (
+    &lt;div className="alert alert-danger m-3"&gt;
+      Hubo un problema al cargar el perfil del usuario.
+    &lt;/div&gt;
+  );
+
   return (
     &lt;div className="card shadow-sm"&gt;
       &lt;div className="card-header"&gt;
         &lt;h3&gt;Perfil de Usuario&lt;/h3&gt;
       &lt;/div&gt;
-      &lt;ErrorBoundary&gt;
+      &lt;ErrorBoundary fallback={errorFallback}&gt;
         &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
           &lt;UserProfile userId={userId} /&gt;
         &lt;/Suspense&gt;
