@@ -1,9 +1,13 @@
-import React from "react";
 import { colorMapper } from "./constants/colorMapper";
 
-export const Button = ({ text, type = "button", color = "primary" }) => {
+export const Button = ({
+  text,
+  type = "button",
+  color = "primary",
+  ...rest
+}) => {
   return (
-    <button type={type} className={`btn mt-3 ${colorMapper[color]}`}>
+    <button type={type} className={`btn ${colorMapper[color]}`} {...rest}>
       {text}
     </button>
   );
