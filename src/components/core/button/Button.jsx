@@ -7,7 +7,7 @@ export const Button = ({
   ...rest
 }) => {
   return (
-    <button type={type} className={`btn ${colorMapper[color]}`} {...rest}>
+    <button type={type} className={`btn w-100 ${colorMapper[color]}`} {...rest}>
       {text}
     </button>
   );
