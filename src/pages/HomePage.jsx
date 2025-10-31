@@ -1,26 +1,14 @@
-import React from "react";
-import { CharacterFormProvider } from "../contexts/CharacterFormContext";
-import { CharactersProvider } from "../contexts/CharactersContext";
-import { CharacterForm } from "../components/CharacterForm";
-import { CharactersTable } from "../components/CharactersTable";
 import { useAuthContext } from "../contexts/AuthContext/AuthContext";
-import { ROLES } from "../contexts/AuthContext/constants";
 
 export const HomePage = () => {
   const { user } = useAuthContext();
 
   return (
-    <section className="container-lg p-4 d-flex flex-column gap-4">
-      <CharacterFormProvider>
-        <CharactersProvider>
-          {user.role === ROLES.ADMIN && (
-            <div className="w-50">
-              <CharacterForm />
-            </div>
-          )}
-          <CharactersTable />
-        </CharactersProvider>
-      </CharacterFormProvider>
-    </section>
+    <div className="card text-center shadow-sm p-4">
+      <div className="card-body">
+        <h1 className="card-title">Página de Inicio</h1>
+        <p className="card-text fs-5">¡Bienvenido de vuelta, {user}!</p>
+      </div>
+    </div>
   );
 };
