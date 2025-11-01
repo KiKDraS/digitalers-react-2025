@@ -25,6 +25,13 @@ const AuthProvider = ({ children }) => {
     return storageToken ? decodeToken(storageToken) : null;
   });
 
+  const updateName = useCallback((newName) => {
+    setUser(newName);
+
+    const token = createToken(newName);
+    localStorage.setItem(USER_STORAGE_KEY, token);
+  }, []);
+
   const login = useCallback((username) => {
     setUser(username);
 
@@ -42,8 +49,9 @@ const AuthProvider = ({ children }) => {
       user,
       login,
       logout,
+      updateName,
     }),
-    [login, logout, user]
+    [login, logout, updateName, user]
   );
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

@@ -1,15 +1,17 @@
-import { Navigate, useLocation } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuthContext } from "../../contexts/AuthContext/AuthContext";
+import { ROUTES } from "../constants";
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = () => {
   const { user } = useAuthContext();
   const location = useLocation();
 
   // No hay sesión iniciada
   if (!user) {
     // Redirigir al login
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
-  return children;
+  // <Outlet /> => children de React Router
+  return <Outlet />;
 };
