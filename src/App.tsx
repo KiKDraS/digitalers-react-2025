@@ -1,12 +1,11 @@
 import { Provider } from "react-redux";
-import { Counter } from "./features/counter/components/Counter";
+import { Todos } from "./features/todo/components/Todos";
 import { store } from "./store";
-import "./App.css";
 
 function App() {
   return (
     <Provider store={store}>
-      <Counter />
+      <Todos />
     </Provider>
   );
 }

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase Práctica: Todo App con React, TypeScript y RTK</title>
+  <!-- Agregamos el CDN de Bootstrap y Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+      background-color: #f8f9fa;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      color: #2c3e50;
+      border-bottom: 2px solid #764ABC;
+      /* Color de Redux */
+      padding-bottom: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      border-bottom: none;
+    }
+
+    pre {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .container-box {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .note {
+      background-color: #e7f3ff;
+      border-left: 4px solid #4a90e2;
+      /* Azul TypeScript */
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .warning-note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0ad4e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container-box">
+    <h1>Clase Práctica: Todo App con React, TypeScript y Redux Toolkit 🚀</h1>
+    <p class="lead text-center">Vamos a construir una aplicación de lista de tareas desde cero, conectada a una API
+      real, y la desplegaremos en la web.</p>
+  </div>
+
+  <div class="container-box">
+    <h2>Conceptos que Aplicaremos</h2>
+    <ul>
+      <li><strong>React:</strong> Crearemos componentes reutilizables (`TodoList`, `TodoItem`) y los
+        "compondremos" para formar nuestra aplicación.</li>
+      <li><strong>TypeScript (TS):</strong> Usaremos TS para definir "contratos" (interfaces) para nuestros datos
+        y estado.</li>
+      <li><strong>Redux Toolkit (RTK):</strong> Manejaremos el estado de forma centralizada, incluyendo la lógica
+        asíncrona para hablar con una API.</li>
+      <li><strong>MockAPI:</strong> Nuestro servidor "falso" que nos permitirá hacer peticiones `GET`, `POST`,
+        `PUT` y `DELETE` reales.</li>
+      <li><strong>Bootstrap y Bootstrap Icons:</strong> Para que nuestra aplicación se vea limpia y profesional.
+      </li>
+      <li><strong>GitHub Pages:</strong> Para desplegar nuestro proyecto terminado en la web de forma gratuita.
+      </li>
+    </ul>
+
+  </div>
+
+  <div class="container-box">
+    <h2>Parte 1: ¿Qué es TypeScript y en qué se diferencia de JavaScript?</h2>
+
+    <p><strong>TypeScript (TS)</strong> es un **superconjunto** de JavaScript. Esto significa que es "JavaScript con
+      superpoderes". Todo el código JavaScript válido es también código TypeScript válido, pero TS añade un componente
+      clave: **Tipado Estático**.</p>
+
+    <div class="note">
+      <strong>Analogía:</strong> Escribir JavaScript es como construir con Legos sin instrucciones. Escribir TypeScript
+      es como construir con los mismos Legos, pero con un manual (los "tipos") que te avisa si intentas poner una pieza
+      donde no va.
+    </div>
+
+    <p>El navegador no entiende TypeScript. Por eso, tenemos un paso de "compilación" (que Vite hace por nosotros) que
+      transforma nuestro código <code>.ts</code> o <code>.tsx</code> en código <code>.js</code> normal que el navegador
+      sí puede ejecutar.</p>
+
+    <h3>Diferencias Clave: Tipado Dinámico vs. Tipado Estático</h3>
+
+    <h4>JavaScript (Tipado Dinámico)</h4>
+    <p>Los tipos de las variables se comprueban **en tiempo de ejecución** (cuando el código ya está en el navegador).
+      Esto puede llevar a errores inesperados que el usuario final experimenta.</p>
+    <pre><code class="language-javascript">
+// Código JavaScript Válido
+function sumar(a, b) {
+  return a + b;
+}
+
+// Bug silencioso: '10' + '5' = "105" (concatenación)
+// No queríamos esto, pero JS lo permite.
+const resultado = sumar(10, "5"); 
+console.log(resultado); // Muestra "105"
+        </code></pre>
+
+    <h4>TypeScript (Tipado Estático)</h4>
+    <p>Los tipos se comprueban **en tiempo de desarrollo** (mientras escribes el código). Tu editor (como VS Code) te
+      avisa de los errores *antes* de que llegues al navegador.</p>
+    <pre><code class="language-typescript">
+// Código TypeScript
+function sumar(a: number, b: number): number {
+  return a + b;
+}
+
+// ¡ERROR! TypeScript nos detiene aquí.
+// El editor subraya "5" y dice:
+// "Argument of type 'string' is not assignable to parameter of type 'number'."
+const resultado = sumar(10, "5"); 
+        </code></pre>
+
+
+    <h3>Herramientas Básicas de TypeScript que Usaremos</h3>
+
+    <h4>1. Tipos Primitivos</h4>
+    <p>Definimos explícitamente el tipo de dato que puede contener una variable.</p>
+    <pre><code class="language-typescript">
+let nombre: string = "Ana";
+let edad: number = 25;
+let estaActivo: boolean = true;
+let cualquierCosa: any = "Intentar evitar 'any'"; // 'any' desactiva TS
+        </code></pre>
+
+    <h4>2. Tipado de Funciones</h4>
+    <p>Definimos los tipos de los parámetros que recibe una función y el tipo de dato que debe retornar.</p>
+    <pre><code class="language-typescript">
+// Esta función debe recibir un 'string' y no debe devolver nada ('void')
+const saludar = (nombre: string): void => {
+  console.log("Hola, " + nombre);
+}
+        </code></pre>
+
+    <h4>3. Interfaces (El Molde o Contrato)</h4>
+    <p>Una <code>interface</code> es la herramienta más poderosa. Define la "forma" que debe tener un objeto. Es nuestro
+      plano o molde.</p>
+    <pre><code class="language-typescript">
+// src/types.ts
+export interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+// Ahora podemos usar 'Todo' como un tipo
+const miTarea: Todo = {
+  id: "1",
+  text: "Aprender TS",
+  completed: false
+  // Si falta 'id' o 'text', TypeScript dará un error.
+};
+        </code></pre>
+
+    <h4>4. Tipar el Estado de Redux</h4>
+    <p>Usamos nuestras interfaces para decirle a Redux exactamente qué forma tiene nuestro estado global.</p>
+    <pre><code class="language-typescript">
+// src/store/todosSlice.ts
+import type { Todo } from '../types'; // Importamos nuestro molde
+
+// Definimos la forma de este "slice" del estado
+interface TodosState {
+  items: Todo[]; // Un array de objetos 'Todo'
+  status: 'idle' | 'loading' | 'succeeded' | 'failed'; // Solo puede ser uno de estos strings
+  error: string | null; // Puede ser un 'string' o 'null'
+}
+
+const initialState: TodosState = {
+  items: [],
+  status: 'idle',
+  error: null,
+};
+        </code></pre>
+
+    <h4>5. Hooks Tipados (La Magia)</h4>
+    <p>En lugar de usar `useSelector` y `useDispatch` genéricos, creamos versiones tipadas. Esto nos da autocompletado
+      en todo el estado de Redux.</p>
+    <pre><code class="language-typescript">
+// src/store/store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+// ...
+
+export const store = configureStore({ /* ... */ });
+
+// Inferimos los tipos del store
+export type RootState = ReturnType&lt;typeof store.getState&gt;;
+export type AppDispatch = typeof store.dispatch;
+
+// Creamos los hooks que usaremos en la app
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook&lt;RootState&gt; = useSelector;
+        </code></pre>
+    <p>Ahora, cuando usemos `useAppSelector(state => ... )`, TypeScript sabrá que `state` tiene una propiedad `todos`
+      (<code>state.todos</code>) y qué forma tiene esta.</p>
+  </div>
+  <div class="container-box">
+    <h2>Parte 2: Configuración del Proyecto (Vite + RTK + Deploy)</h2>
+    <p>1. Creamos un nuevo proyecto React con Vite usando la plantilla de TypeScript:</p>
+    <pre><code class="language-bash">
+npm create vite@latest mi-todo-app -- --template react-ts
+cd mi-todo-app
+        </code></pre>
+
+    <p>2. Instalamos todas las dependencias necesarias (RTK, React-Redux, Bootstrap y `gh-pages` para el deploy):
+    </p>
+    <pre><code class="language-bash">
+# Dependencias de producción
+npm install @reduxjs/toolkit react-redux bootstrap bootstrap-icons
+
+# Dependencia de desarrollo (solo para el deploy)
+npm install gh-pages --save-dev
+        </code></pre>
+
+    <p>3. Creamos nuestra API en <a href="https://mockapi.io/" target="_blank">MockAPI.io</a> (recurso `todos` con
+      campos `text` y `completed`) y copiamos la URL.</p>
+
+    <p>4. Importamos Bootstrap CSS en <code>src/main.tsx</code>:</p>
+    <pre><code class="language-typescript">
+// src/main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import App from './App';
+
+// Importar estilos de Bootstrap y Bootstrap Icons
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  &lt;React.StrictMode&gt;
+    &lt;Provider store={store}&gt;
+      &lt;App /&gt;
+    &lt;/Provider&gt;
+  &lt;/React.StrictMode&gt;
+);
+        </code></pre>
+  </div>
+
+  <div class="container-box">
+    <h2>Parte 3: Lógica Asíncrona con `createAsyncThunk`</h2>
+    <p>En lugar de poner la lógica de `fetch` en los componentes, la ponemos en nuestro "slice" de Redux usando
+      `createAsyncThunk`. Esto nos permite manejar centralizadamente los estados de carga, éxito y error.</p>
+
+    <h4><code>src/store/todosSlice.ts</code> (Ejemplo de `fetchTodos`)</h4>
+    <pre><code class="language-typescript">
+// ... (importaciones y API_URL)
+
+// 1. EL THUNK: Define la acción asíncrona "todos/fetchTodos"
+export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
+  const response = await fetch(API_URL);
+  if (!response.ok) throw new Error('Error al cargar las tareas');
+  const data: Todo[] = await response.json();
+  return data;
+});
+
+// ... (definición del Slice) ...
+
+  // 2. EXTRAREDUCERS: Escucha los eventos del thunk
+  extraReducers: (builder) => {
+    builder
+      // Cuando la petición EMPIEZA
+      .addCase(fetchTodos.pending, (state) => {
+        state.status = 'loading';
+      })
+      // Cuando la petición TERMINA BIEN
+      .addCase(fetchTodos.fulfilled, (state, action: PayloadAction&lt;Todo[]&gt;) => {
+        state.status = 'succeeded';
+        state.items = action.payload; // Guardamos los datos en el estado
+      })
+      // Cuando la petición FALLA
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Algo salió mal';
+      });
+      // ... (casos para addNewTodo, toggleTodo, deleteTodo) ...
+  },
+// ...
+        </code></pre>
+    <p>Luego, desde nuestro <code>App.tsx</code>, simplemente "despachamos" esta acción cuando el componente se
+      carga:</p>
+    <pre><code class="language-tsx">
+// src/App.tsx
+import React, { useEffect } from 'react';
+import { useAppDispatch } from './store/store';
+import { fetchTodos } from './store/todosSlice';
+// ...
+
+function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
+  
+  // ... (resto del return)
+}
+        </code></pre>
+  </div>
+
+  <div class="container-box">
+    <h2>Parte 4: Composición de Componentes (La UI)</h2>
+    <p>Nuestra UI se divide en componentes lógicos que se "componen" (anidan) para formar la aplicación.</p>
+
+    <h4><code>src/App.tsx</code> (El Contenedor Principal)</h4>
+    <p>Define la estructura de la tarjeta y delega el trabajo a componentes hijos.</p>
+    <pre><code class="language-tsx">
+function App() {
+  // ... (lógica del useEffect para cargar todos) ...
+
+  return (
+    &lt;div className="container mt-5" style={{ maxWidth: '600px' }}&gt;
+      &lt;div className="card shadow-sm"&gt;
+        &lt;div className="card-body"&gt;
+          &lt;h1&gt;Mi Lista de Tareas&lt;/h1&gt;
+          
+          {/* Componente 1: Formulario */}
+          &lt;AddTodoForm /&gt;
+          
+          &lt;hr className="my-4" /&gt;
+          
+          {/* Componente 2: Lista */}
+          &lt;TodoList /&gt;
+          
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+        </code></pre>
+
+    <h4><code>src/components/TodoList.tsx</code> (Manejo de Estados de UI)</h4>
+    <p>Este componente usa <code>useAppSelector</code> para leer el estado de la API (<code>status</code>) y decide
+      qué mostrar: un spinner, un error o la lista de tareas.</p>
+    <pre><code class="language-tsx">
+import React from 'react';
+import { useAppSelector } from '../store/store';
+import { TodoItem } from './TodoItem';
+
+export const TodoList: React.FC = () => {
+  // Leemos el estado completo (con autocompletado gracias a TS)
+  const { items: todos, status, error } = useAppSelector((state) => state.todos);
+
+  if (status === 'loading') {
+    return (
+      &lt;div className="d-flex justify-content-center my-4"&gt;
+        &lt;div className="spinner-border" role="status"&gt;...&lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+
+  if (status === 'failed') {
+    return &lt;div className="alert alert-danger"&gt;Error: {error}&lt;/div&gt;;
+  }
+
+  return (
+    &lt;ul className="list-group"&gt;
+      {todos.length === 0 ? (
+        &lt;li className="list-group-item text-muted"&gt;No hay tareas.&lt;/li&gt;
+      ) : (
+        // Compone un 'TodoItem' por cada tarea
+        todos.map((todo) => (
+          &lt;TodoItem key={todo.id} todo={todo} /&gt;
+        ))
+      )}
+    &lt;/ul&gt;
+  );
+};
+        </code></pre>
+  </div>
+
+  <div class="container-box">
+    <h2>Parte 5: Desplegando a GitHub Pages con Vite 🌍</h2>
+    <p>Una vez que nuestra app funciona localmente, ¡vamos a publicarla en la web gratis!</p>
+
+    <div class="warning-note">
+      <strong>Pre-requisito:</strong> Tu proyecto debe estar en un repositorio de GitHub y ya debes haber subido
+      tu código (<code>git push</code>).
+    </div>
+
+    <h4>Paso 1: Configurar <code>package.json</code></h4>
+    <p>Añadimos tres cosas: la URL de nuestro sitio y dos scripts para automatizar el despliegue.</p>
+    <pre><code class="language-json">
+// package.json (ejemplo parcial)
+{
+  "name": "mi-todo-app",
+  // 👇 1. Añade la URL de tu sitio
+  "homepage": "https://tu-usuario-github.github.io/tu-repositorio/",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    // 👇 2. Añade este script de "pre-despliegue"
+    "predeploy": "npm run build",
+    // 👇 3. Añade este script de despliegue
+    "deploy": "gh-pages -d dist"
+  },
+  // ... resto del package.json
+}
+        </code></pre>
+    <p><strong>Importante:</strong> Reemplaza <code>tu-usuario-github</code> y <code>tu-repositorio</code> con tus
+      datos reales. (Ej: <code>"https://janesmith.github.io/react-todo-app/"</code>)</p>
+
+    <h4>Paso 2: Configurar <code>vite.config.ts</code> (¡Crucial!)</h4>
+    <p>GitHub Pages no aloja tu app en la raíz (<code>dominio.com</code>), sino en una sub-carpeta
+      (<code>dominio.com/mi-repo/</code>). Necesitamos decirle a Vite que use esta sub-carpeta como la ruta
+      "base".</p>
+    <pre><code class="language-typescript">
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  // 👇 Añade esta línea con el nombre de tu repositorio
+  base: '/tu-repositorio/', 
+})
+        </code></pre>
+    <p>(Ej: <code>base: '/react-todo-app/'</code>)</p>
+
+    <h4>Paso 3: Ejecutar el Despliegue</h4>
+    <p>Una vez configurado, solo tienes que ejecutar un comando en tu terminal:</p>
+    <pre><code class="language-bash">
+npm run deploy
+        </code></pre>
+    <p>Este comando automáticamente:</p>
+    <ol>
+      <li>Ejecuta <code>npm run build</code> (gracias a `predeploy`) y crea la carpeta `dist` con tu app
+        optimizada.</li>
+      <li>Usa `gh-pages` para tomar esa carpeta `dist` y subirla a una nueva rama en GitHub llamada
+        <code>gh-pages</code>.
+      </li>
+    </ol>
+
+    <h4>Paso 4: Activar GitHub Pages</h4>
+    <ol>
+      <li>Ve a tu repositorio en GitHub.</li>
+      <li>Haz clic en "Settings" (Configuración).</li>
+      <li>En el menú lateral, ve a "Pages".</li>
+      <li>Bajo "Build and deployment" > "Source", selecciona "Deploy from a branch".</li>
+      <li>Asegúrate de que la rama (`Branch`) esté configurada en **`gh-pages`** y la carpeta en **`/ (root)`**.
+      </li>
+      <li>Haz clic en "Save".</li>
+    </ol>
+    <p>Después de unos minutos, tu sitio estará activo en la URL que especificaste en tu <code>homepage</code>.</p>
+
+  </div>
+
+</body>
+
+</html>
